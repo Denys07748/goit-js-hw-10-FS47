@@ -19,18 +19,24 @@ function findCountry(e) {
       if (findToCountry === '') {
         clearCountryInfo();
         clearCountryList();
+        return;
       }
       if (response.length === 1) {
         renderCountry(response);
         clearCountryList();
+        return;
       }
       if (response.length > 10) {
         Notiflix.Notify.info(
           'Too many matches found. Please enter a more specific name.'
         );
+        clearCountryInfo();
+        clearCountryList();
+        return;
       } else if (response.length > 1 && response.length <= 10) {
         renderCountryList(response);
         clearCountryInfo();
+        return;
       }
     })
     .catch(error => {
@@ -54,8 +60,6 @@ function renderCountryList(countries) {
 
   refs.countryList.innerHTML = markupList;
 }
-
-refs.countryList.style.listStyle = none;
 
 function renderCountry(countries) {
   const markup = countries
