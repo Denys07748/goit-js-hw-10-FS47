@@ -2,6 +2,8 @@ import './css/styles.css';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
 import { fetchCountries } from './fetchCountries';
+// import countryList from './templates/countryList.hbs';
+// import countryInfo from './templates/countryInfo.hbs';
 
 const DEBOUNCE_DELAY = 300;
 const refs = {
@@ -14,44 +16,37 @@ refs.input.addEventListener('input', debounce(findCountry, DEBOUNCE_DELAY));
 
 function findCountry(e) {
   const findToCountry = e.target.value.trim();
-  fetchCountries(findToCountry)
-    .then(response => {
-      if (findToCountry === '') {
-        clearCountryInfo();
-        clearCountryList();
-        return;
-      }
-      if (response.length === 1) {
-        renderCountry(response);
-        clearCountryList();
-        return;
-      }
-      if (response.length > 10) {
-        Notiflix.Notify.info(
-          'Too many matches found. Please enter a more specific name.'
-        );
-        clearCountryInfo();
-        clearCountryList();
-        return;
-      } else if (response.length > 1 && response.length <= 10) {
-        renderCountryList(response);
-        clearCountryInfo();
-        return;
-      }
-    })
-    .catch(error => {
-      console.log('THIS IS CATH!!!');
-      Notiflix.Notify.failure('Oops, there is no country with that name');
-    });
+
+  clearCountryInfo();
+  clearCountryList();
+  if (findToCountry === '') {
+    return;
+  }
+
+  fetchCountries(findToCountry).then(renderCountry).catch(fetchError);
 }
 
-function renderCountryList(countries) {
+function renderCountry(country) {
+  if (country.length > 10) {
+    Notiflix.Notify.info(
+      'Too many matches found. Please enter a more specific name.'
+    );
+  }
+  if (country.length > 1 && country.length <= 10) {
+    markupCountryList(country);
+  } else if (country.length === 1) {
+    markupCountryInfo(country);
+    clearCountryList();
+  }
+}
+
+function markupCountryList(countries) {
   const markupList = countries
     .map(
       ({ name, flags }) =>
         `<li>
-        <div class = "wrapper">
-            <img src = ${flags.svg} alt = "flag" width = 35 hight = 20>
+        <div class = "countrylist">
+            <img src = ${flags.svg} alt = "flag" class = "flag" width = 35 hight = 20>
             <h2 name = "country">${name.official}</h2>
         </div>
         </li>`
@@ -61,7 +56,7 @@ function renderCountryList(countries) {
   refs.countryList.innerHTML = markupList;
 }
 
-function renderCountry(countries) {
+function markupCountryInfo(countries) {
   const markup = countries
     .map(
       ({ name, capital, population, languages, flags }) =>
@@ -76,6 +71,13 @@ function renderCountry(countries) {
     .join('');
 
   refs.countryInfo.innerHTML = markup;
+}
+
+function fetchError() {
+  clearCountryInfo();
+  clearCountryList();
+  console.log('THIS IS CATH!!!');
+  Notiflix.Notify.failure('Oops, there is no country with that name');
 }
 
 function clearCountryList() {
