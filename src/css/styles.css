@@ -11,10 +11,11 @@ body {
   color: #212121;
   line-height: 1.5;
   height: 100vh;
-  background: linear-gradient(180deg,
-      rgb(43, 98, 180) 19%,
-      rgb(205, 235, 60) 88%);
-  
+  background: linear-gradient(
+    180deg,
+    rgb(62, 112, 185) 19%,
+    rgb(202, 224, 89) 88%
+  );
 }
 
 #search-box {
