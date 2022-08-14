@@ -17,8 +17,7 @@ refs.input.addEventListener('input', debounce(findCountry, DEBOUNCE_DELAY));
 function findCountry(e) {
   const findToCountry = e.target.value.trim();
 
-  clearCountryInfo();
-  clearCountryList();
+  clearCountry();
   if (findToCountry === '') {
     return;
   }
@@ -36,7 +35,6 @@ function renderCountry(country) {
     markupCountryList(country);
   } else if (country.length === 1) {
     markupCountryInfo(country);
-    clearCountryList();
   }
 }
 
@@ -45,8 +43,8 @@ function markupCountryList(countries) {
     .map(
       ({ name, flags }) =>
         `<li>
-        <div class = "countrylist">
-            <img src = ${flags.svg} alt = "flag" class = "flag" width = 35 hight = 20>
+        <div class = "country-item">
+            <img src = ${flags.svg} alt = "flag" class = "flag--small">
             <h2 name = "country">${name.official}</h2>
         </div>
         </li>`
@@ -60,13 +58,18 @@ function markupCountryInfo(countries) {
   const markup = countries
     .map(
       ({ name, capital, population, languages, flags }) =>
-        `<div class = "wrapper">
-            <img src = ${flags.svg} alt = "flag" width = 50 hight = 30>
+        `<div class = "country-item">
+            <img src = ${flags.svg} class = "flag" alt = "flag">
             <h1 name = "country">${name.official}</h1>
         </div>
-        <p>Capital: ${capital}</p>
-        <p>Population: ${population}</p>
-        <p>Languages: ${Object.values(languages).join(',')}</p>`
+        <p class = "country-info">Capital: 
+        <span class = "country-info-description">${capital}</span></p>
+        <p class = "country-info">Population: 
+        <span class = "country-info-description">${population}</span></p>
+        <p class = "country-info">Languages: 
+        <span class = "country-info-description">${Object.values(
+          languages
+        ).join(',')}</span></p>`
     )
     .join('');
 
@@ -74,16 +77,10 @@ function markupCountryInfo(countries) {
 }
 
 function fetchError() {
-  clearCountryInfo();
-  clearCountryList();
-  console.log('THIS IS CATH!!!');
   Notiflix.Notify.failure('Oops, there is no country with that name');
 }
 
-function clearCountryList() {
+function clearCountry() {
   refs.countryList.innerHTML = '';
-}
-
-function clearCountryInfo() {
   refs.countryInfo.innerHTML = '';
 }
